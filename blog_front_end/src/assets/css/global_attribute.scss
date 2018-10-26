@@ -1,0 +1,16 @@
+@charset "UTF-8";
+@mixin width($width){width: round($width);}
+@mixin float($float){
+	@if $float == left {float:left;}
+	@else if $float == right {float: right;}
+	@else {overflow: hidden; zoom: 1;}
+}
+@mixin font-size($fontSize){
+	@if $fontSize == menu {font-size: 16px;}
+	@else if $fontSize == title {font-size: 18px;} 
+	@else {font-size: 14px;}
+}
+@mixin flex-container($deg){
+	display:flex;
+	flex-direction:$deg;
+}
