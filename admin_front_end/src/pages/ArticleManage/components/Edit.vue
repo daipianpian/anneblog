@@ -1,0 +1,376 @@
+<template>
+	<el-dialog class="dialog-wrap medium-dialog article-dialog" title="编辑文章" :visible.sync="showFlag">
+		<el-form :model="formDatas" :rules="formRules" ref="formDatas" size="small" :label-width="formLabelWidth">
+			<el-form-item label="文章名称：" prop="title">
+			    <el-input type="text" v-model="formDatas.title"></el-input>
+			</el-form-item>
+			<el-form-item label="文章内容：" prop="content">
+			    <quill-editor class="quill" :options="editorOption" ref="QuillEditor" v-model="formDatas.content">
+			        </quill-editor>
+			</el-form-item>
+			
+			<el-form-item label="类别：" prop="typeId">
+			    <el-select class="state-select" v-model="formDatas.typeId" value-key="value" placeholder="请选择">
+				    <el-option
+				      v-for="item in optionList.type" 
+				      :key="item.value"
+				      :label="item.label"
+				      :value="item.value">
+				    </el-option>
+				</el-select>
+			</el-form-item>
+			<el-form-item label="分类：" prop="classifyId">
+			    <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+				<el-checkbox-group v-model="formDatas.classifyId" value-key="value" @change="handleClassifyChange">
+				    <el-checkbox v-for="item in optionList.classify" :label="item.value" :key="item.value">{{item.label}}</el-checkbox>
+				</el-checkbox-group>
+			</el-form-item>
+			<el-form-item label="标签：" prop="tagId">
+			    <el-select v-model="formDatas.tagId" multiple filterable allow-create default-first-option placeholder="请选择">
+				    <el-option
+				      v-for="item in optionList.tag" 
+				      :key="item.tagId"
+				      :label="item.tagName"
+				      :value="item.tagId">
+				    </el-option>
+				</el-select>
+			</el-form-item>
+			<el-form-item label="状态：" prop="status">
+			    <el-radio-group v-model="formDatas.status" value-key="value">
+			      <el-radio v-for="item in optionList.status" :label="item.value" :key="item.value">{{item.label}}</el-radio>
+			    </el-radio-group>
+			</el-form-item>
+		</el-form>
+
+		<div slot="footer" class="dialog-footer">
+		    <el-button type="primary" size="small" @click="onSubmit('formDatas')">保 存</el-button>
+		    <el-button size="small" @click="onCancel">取 消</el-button>
+		</div>
+
+	</el-dialog>
+</template>
+
+<script type="text/ecmascript-6">
+	import {typeQueryType, classifyQueryClassify, tagQueryTag, articleEditArticle, articleUpdateArticle} from "../../../config/interface.js"
+	export default {
+        props: {
+        },
+        data() {
+        	// 工具栏配置
+			const toolbarOptions = [
+				  ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+				  ['blockquote', 'code-block'],
+				  [{'header': 1}, {'header': 2}],               // custom button values
+				  [{'list': 'ordered'}, {'list': 'bullet'}],
+				  [{'script': 'sub'}, {'script': 'super'}],      // superscript/subscript
+				  [{'indent': '-1'}, {'indent': '+1'}],          // outdent/indent
+				  [{'direction': 'rtl'}],                         // text direction
+
+				  [{'size': ['small', false, 'large', 'huge']}],  // custom dropdown
+				  [{'header': [1, 2, 3, 4, 5, 6, false]}],
+				  [{'color': []}, {'background': []}],          // dropdown with defaults from theme
+				  [{'font': []}],
+				  [{'align': []}],
+				  ['link', 'image', 'video'],
+				  ['clean']                                         // remove formatting button
+			];
+            return {
+            	formLabelWidth: '120px',
+            	showFlag: false,
+		        formDatas: {
+		        	id: 0,
+		        	title: null,
+		        	content: null,
+		        	typeId: null,
+		        	classifyId: [],
+		        	tagId: [],
+		        	status: null
+		        },
+		        formRules: {
+		        	title: [
+						{ required: true, message: '请填写文章标题', trigger: 'blur' }
+					],
+		        	typeId: [
+						{ required: true, message: '请选择类别', trigger: 'blur' }
+					],
+					classifyId: [
+						{ required: true, message: '请选择分类', trigger: 'blur' }
+					],
+					status: [
+						{ required: true, message: '请选择状态', trigger: 'blur' }
+					]
+		        },
+		        editorOption: {
+					placeholder: '',
+					theme: 'snow',  // or 'bubble'
+					modules: {
+						toolbar: {
+							container: toolbarOptions,  // 工具栏
+							/*handlers: {
+								'image': function (value) {
+									if (value) {
+										document.querySelector('#uploader-img input').click()
+									} else {
+										this.quill.format('image', false);
+									}
+								}
+							}*/
+						}
+					}
+			    },
+			    optionList: {
+			    	type: [],
+					classify: [],
+					tag: [],
+					status: [{
+						value: 1,
+						label: '立即发布'
+					},{
+						value: 2,
+						label: '保存草稿'
+					}]
+			    },
+		        classifyList: [],
+		        checkAll: false,
+        		isIndeterminate: false,
+        		pagination: {
+        			type: {
+        				pageNum: 1,
+        				pageSize: 10
+        			},
+        			cassify: {
+        				pageNum: 1,
+        				pageSize: 10
+        			},
+        			tag: {
+        				pageNum: 1,
+        				pageSize: 10
+        			}
+        		}
+            }
+        },
+		methods: {
+			// 初始化
+			init(articleId) {
+				this.formDatas.id = articleId
+				this.$nextTick(() => {
+					this.queryType()
+					this.queryClassify()
+					this.queryTag()
+					this.editArticle()
+				})
+				this.changeShowFlag()
+			},
+			// 查询类别
+			queryType() {
+				const url = typeQueryType;
+				const _this = this;
+				let params = {
+        			pageNum: this.pagination.type.pageNum,
+        			pageSize: this.pagination.type.pageSize,
+        			typeId: null,
+        			typeName: null,
+        			status: 1
+        		}
+        		fetch(url,params)
+				.then(res =>{
+					if(res.code == 10000){
+						let data=res.data
+
+						let list = data.list
+						let list_length = list.length
+						if(list_length > 0){
+							let typeList = []
+							list.forEach(function(value,index){
+								let obj = {}
+								obj.value = value.id
+								obj.label = value.name
+								typeList.push(obj)
+							})
+							_this.optionList.type = typeList
+						}else{
+							_this.optionList.type = []
+						}
+					}
+				})
+			},
+			// 查询分类
+			queryClassify() {
+				const url = classifyQueryClassify;
+				const _this = this;
+
+        		let params = {
+        			pageNum: this.pagination.cassify.pageNum,
+        			pageSize: this.pagination.cassify.pageSize,
+        			classifyId: null,
+        			classifyName: null,
+        			status: 1
+        		}
+        		fetch(url,params)
+				.then(res =>{
+					if(res.code == 10000){
+						let data=res.data
+
+						let list = data.list
+						let list_length = list.length
+						if(list_length > 0){
+							let classifyList = []
+							list.forEach(function(value,index){
+								let obj = {}
+								obj.value = value.id
+								obj.label = value.name
+								classifyList.push(obj)
+								_this.classifyList.push(obj.value)
+							})
+							_this.optionList.classify = classifyList
+						}else{
+							_this.optionList.classify = []
+						}
+					}
+				})
+			},
+			// 查询标签
+			queryTag() {
+				const url = tagQueryTag;
+				const _this = this;
+
+        		let params = {
+        			pageNum: this.pagination.tag.pageNum,
+        			pageSize: this.pagination.tag.pageSize,
+        			tagId: null,
+        			tagName: null,
+        			status: 1
+        		}
+        		fetch(url,params)
+				.then(res =>{
+					if(res.code == 10000){
+						let data=res.data
+
+						let list = data.list
+						let list_length = list.length
+						if(list_length > 0){
+							let tagList = []
+							list.forEach(function(value,index){
+								let obj = {}
+								obj.tagId = value.id
+								obj.tagName = value.name
+								tagList.push(obj)
+							})
+							_this.optionList.tag = tagList
+						}else{
+							_this.optionList.tag = []
+						}
+					}
+				})
+			},
+			editArticle() {
+				const url = articleEditArticle
+	            const _this = this
+				let params = {
+					articleId: this.formDatas.id
+				}
+				fetch(url,params)
+				.then(res =>{
+					if(res.code == 10000){
+						let data=res.data
+						_this.formDatas = {
+				        	id: data.id,
+				        	title: data.title,
+				        	content: data.content,
+				        	typeId: data.typeId,
+				        	classifyId: [],
+				        	tagId: [],
+				        	status: data.status
+				        }
+
+				        // 分类
+				        let classifyId = data.classifyId
+				        if(classifyId != ''){
+				        	let obj_classifyId =JSON.parse('['+classifyId+']')
+				        	obj_classifyId.forEach(function(value,index){
+				        		_this.formDatas.classifyId.push(value)
+				        	})
+
+				        	if(obj_classifyId.length < _this.classifyList.length){
+				        		_this.isIndeterminate = true
+				        		_this.checkAll = false
+				        	}else{
+				        		_this.isIndeterminate = false
+				        		_this.checkAll = true
+				        	}
+				        }else{
+				        	_this.formDatas.classifyId = []
+				        }
+
+				        // 标签
+				        let tagId = data.tagId
+				        if(tagId != ''){
+				        	let obj_tagId =JSON.parse('['+tagId+']')
+				        	obj_tagId.forEach(function(value,index){
+				        		_this.formDatas.tagId.push(value)
+				        	})
+				        }else{
+				        	_this.formDatas.tagId = []
+				        }
+					}
+				})
+			},
+			// 对话框是否显示
+			changeShowFlag() {
+				this.showFlag = !this.showFlag
+			},
+			handleCheckAllChange(val) {
+				this.formDatas.classifyId = val ? this.classifyList : [];
+				this.isIndeterminate = false;
+			},
+			handleClassifyChange(value) {
+				let checkedCount = value.length;
+				this.checkAll = checkedCount === this.classifyList.length;
+				this.isIndeterminate = checkedCount > 0 && checkedCount < this.classifyList.length;
+			},
+			onSubmit(formDatas){
+				this.$refs[formDatas].validate((valid) => {
+					if (valid) {
+						const url = articleUpdateArticle
+			            const _this = this
+			            let params = {
+			            	articleId: this.formDatas.id,
+			            	title: this.formDatas.title,
+				        	content: this.formDatas.content,
+				        	typeId: this.formDatas.typeId,
+				        	tagId: this.formDatas.tagId,
+				        	classifyId: this.formDatas.classifyId,
+				        	status: this.formDatas.status
+			            }
+			            fetch(url,params)
+						.then(res =>{
+							if(res.code == 10000){
+								bs.toast('编辑成功','success',false)
+								_this.changeShowFlag()
+								_this.$refs['formDatas'].resetFields()
+								_this.$emit('editEvent')
+							}
+						})
+					} else {
+						bs.toast('信息填写有误！','error',false)
+						return false;
+					}
+		      	})
+			},
+			// 取消
+			onCancel() {
+				this.changeShowFlag()
+				this.$refs['formDatas'].resetFields();
+			}
+		}
+    }
+</script>
+
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style lang="scss" rel="stylesheet/scss">
+.article-dialog{
+	.quill-editor{width: 550px;}
+	.quill-editor .ql-container { height: 400px; }
+}
+</style>

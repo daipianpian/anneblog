@@ -1,0 +1,123 @@
+
+@charset "UTF-8";
+html,body { margin: 0; padding: 0; color: $color-black; background: $color-bg; font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, SimSun, sans-serif; -webkit-font-smoothing: antialiased; }
+img {display: block; border: 0; vertical-align: middle;margin: 0 auto; will-change: transform; }
+
+.flex {display: -webkit-box;display: -webkit-flex;display: flex;}
+.flex-item {-webkit-box-flex: 1;-webkit-flex: 1;flex: 1;}
+
+@media screen and (min-width: 0) and (max-width: 1440px){
+	.header{width:1440px;}
+	.home{width:1440px;}
+    .main{
+    	width:1210px;
+    }
+    .table-fixed .el-table__header-wrapper{width:1170px;}
+}
+
+.menu-main-wrap{margin-top: 60px;}
+
+.main{
+	margin: 0 10px 0 220px; padding: 0;
+	&.main-wrap{margin: 0 0 0 210px;}
+	.top-menu{background: #fff;padding: 0 10px;}
+	.main-body{margin-left: 10px;margin-right: 10px;}
+}
+
+/* 右边主框样式 */
+.main-content{padding:20px;position: relative;background: $color-white;
+	&:before{ content: "";position:absolute; width:1px;height:100%;top:0; left:0; background:$color-gray-light;}
+	&:after{ content: "";position:absolute; width:1px;height:100%;top:0; right:0; background:$color-gray-light;}
+}
+
+/* 右边搜索模块样式 */
+.search{
+	.el-form{
+		.el-input,.el-select{width:200px;}
+		.el-input__inner[type="number"]{padding-right: 0;}
+		.el-icon-question:before{color: $color-main;}
+		.el-row:last-child .el-form-item{margin-bottom: 4px;}
+	} 
+}
+/* 右边内容（table）样式 */
+.content{
+	margin-bottom: 60px;
+	.content-header{margin-bottom: 30px;}
+	.el-table{
+		th{background: $color-table-title;}
+		.el-table thead.is-group th{background: $color-table-title;}
+		.el-button+.el-button{margin-left: 0;}
+		.el-button--text{padding: 9px 15px;@include font-size(default);}
+		.el-table__row td:first-child{
+			position:relative;
+			
+		}
+		.state-select{width:80px;}
+		.text-danger{
+			&.el-button--text{
+				color: $color-danger;
+				&:focus,&:hover,&:active{color: $color-danger;}
+			}
+			input{
+				color: $color-danger;
+			}	
+		}
+		.line-clamp .cell{ overflow: hidden; -ms-text-overflow: ellipsis; text-overflow: ellipsis; display: -webkit-box; 
+		/* ! autoprefixer: off */  
+		-webkit-box-orient: vertical; 
+		/* autoprefixer: on */ 
+		 -webkit-line-clamp: 2;}	 
+	}
+	.el-pagination{margin-top: 25px;}
+	.table-fixed{
+		.el-table__header-wrapper#header-wrapper-first{position: fixed;top:60px;z-index: 1;}
+	}
+	.table-static{
+		.el-table__header-wrapper{position: static;}
+	}
+
+	.thumb-img{width:61px;height: 61px;margin: 0 auto;text-align: center; overflow: hidden}
+	.thumb-img img{width:60px;height: 60px;display: inline-block; vertical-align: middle;}
+
+}	
+
+/*新增或者编辑的对话框样式 start*/
+.dialog-wrap{
+	.el-dialog{width: 510px;}
+	.el-dialog .el-input, .el-dialog .el-select, .el-dialog .el-textarea{width: 300px;}
+	.el-input__inner[type="number"]{padding-right: 0;}
+	.el-textarea__inner{height:100px;}
+}
+.medium-dialog.dialog-wrap{
+	.el-dialog{width: 760px;}
+	.el-dialog .el-input, .el-dialog .el-select, .el-dialog .el-textarea{width: 550px;}
+}
+.big-dialog.dialog-wrap{
+	.el-dialog{width: 1000px;}
+}
+/*新增或者编辑的对话框样式 end*/
+
+/* 表格里的元素，鼠标滑过出现的弹出框样式 start */
+.table-popover{
+	&.el-popover{max-width: 20%;color:#fff; background: rgba(0,0,0,0.5);}
+	&.el-popper[x-placement^=top] .popper__arrow::after{border-top-color: rgba(0,0,0,0.5);}
+	&.el-popper[x-placement^=bottom] .popper__arrow::after{border-bottom-color: rgba(0,0,0,0.5);}
+	.popover-center{text-align: center;}
+	.popover-center img{width: 100%;}	
+}
+/* 表格里的元素，鼠标滑过出现的弹出框样式 end */
+
+
+.hr-10{width: 100%; height: 10px; background: $color-bg;}
+
+.text-success{color: $color-success;}
+.text-warning{color: $color-warning;}
+.text-danger{color: $color-danger;}
+.text-info{color: $color-info;}
+
+.bg-success{color:#ffffff; background: $color-success;}
+.bg-warning{color:#ffffff; background: $color-warning;}
+.bg-danger{color:#ffffff; background: $color-danger;}
+.bg-info{color:#ffffff; background: $color-info;}
+
+
