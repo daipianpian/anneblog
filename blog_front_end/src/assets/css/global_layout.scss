@@ -6,6 +6,10 @@ img {display: block; border: 0; vertical-align: middle;margin: 0 auto; will-chan
 .flex {display: -webkit-box;display: -webkit-flex;display: flex;}
 .flex-item {-webkit-box-flex: 1;-webkit-flex: 1;flex: 1;}
 
+.float-left {float:left;}
+.float-right {float:right;}
+.clearboth{overflow: hidden; zoom: 1;}
+
 /* @media screen and (min-width: 0) and (max-width: 1440px){
 	.header{width:1440px;}
 	.home{width:1440px;}
@@ -15,12 +19,12 @@ img {display: block; border: 0; vertical-align: middle;margin: 0 auto; will-chan
 } */
 
 .main{
-	
+	.main-content{padding: 20px 24px;}
+	.right-sidebar{
+		.main-content{margin-bottom: 15px;background:#fff;}
+	}
 }
 
-/* 右边主框样式 */
-.main-content{
-}
 
 .text-success{color: $color-success;}
 .text-warning{color: $color-warning;}

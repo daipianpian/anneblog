@@ -1,17 +1,12 @@
 <template>
-	<div class="home">
-		<div class="menu-main-wrap">
-			<left-menu></left-menu>
-			<transition name="fade" mode="out-in" appear>
-				<router-view></router-view>
-			</transition>
-		</div>
+	<div class="home flex">
+		<left-menu></left-menu>
+		<router-view></router-view>
 	</div>
 </template>
 
 <script type="text/ecmascript-6">
 	import LeftMenu from '../components/LeftMenu'
-	import RightSidebar from '../components/RightSidebar'
 	export default {
 		data() {
 			return {
@@ -19,8 +14,7 @@
 			};
 		},
 		components: {
-			LeftMenu,
-			RightSidebar
+			LeftMenu
 		},
 		computed: {
 
