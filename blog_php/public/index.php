@@ -15,19 +15,19 @@
 define('APP_PATH', __DIR__ . '/../application/');
 
 // 定义运行时目录
-define('RUNTIME_PATH',APP_PATH.'admin/runtime/');
+define('RUNTIME_PATH',APP_PATH.'index/runtime/');
 
 // 定义日志目录
-define('LOG_PATH',APP_PATH.'admin/runtime/log/');
+define('LOG_PATH',APP_PATH.'index/runtime/log/');
 
 // 定义项目模板缓存目录
-define('CACHE_PATH',APP_PATH.'admin/runtime/cache/');
+define('CACHE_PATH',APP_PATH.'index/runtime/cache/');
 
 // 定义应用缓存目录
-define('TEMP_PATH',APP_PATH.'admin/runtime/temp/');
+define('TEMP_PATH',APP_PATH.'index/runtime/temp/');
 
 // 定义SESSION
-define('SESSION_PATH',APP_PATH.'admin/runtime/session/');
+define('SESSION_PATH',APP_PATH.'index/runtime/session/');
 
 // 加载框架引导文件
 require __DIR__ . '/../thinkphp/start.php';
