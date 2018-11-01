@@ -4,19 +4,14 @@ import store from '../store/index.js'
 import router from '../router/index.js'
 
 axios.defaults.timeout = 10000;
-axios.defaults.baseURL = 'http://blog.api.daipianpian.com/admin.php/admin';
+axios.defaults.baseURL = 'http://blog.api.daipianpian.com/index';
 
 export const baseURL = axios.defaults.baseURL
 
 axios.interceptors.request.use((config)=>{
 	if (config.method === 'post') {
 	    config.headers['Content-Type'] = 'application/json';
-
-      // console.log('token='+store.state.token);
-
-        config.headers['userToken'] = store.state.token
-        config.data = JSON.stringify(config.data);
-        return config;
+      return config;
 		}	
 	},(error) => {
 		var str = "输入有误，请核对";
@@ -82,13 +77,6 @@ axios.interceptors.response.use(response => {
 
 export function fetch(url, params, responseType) {
     return new Promise((resolve, reject) => {
-      /*let adminId = localStorage.getItem('adminId')*/
-      let adminId = store.state.adminId
-      if(adminId && adminId>0){
-        params.adminId = adminId;
-      }else{
-        params.adminId = 0;
-      }
 
       if(!responseType || typeof(responseType) == 'undefined'){
         // 普通post请求

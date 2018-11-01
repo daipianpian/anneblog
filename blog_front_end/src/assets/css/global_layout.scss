@@ -10,13 +10,13 @@ img {display: block; border: 0; vertical-align: middle;margin: 0 auto; will-chan
 .float-right {float:right;}
 .clearboth{overflow: hidden; zoom: 1;}
 
-/* @media screen and (min-width: 0) and (max-width: 1440px){
-	.header{width:1440px;}
-	.home{width:1440px;}
-    .main{
-    	width:1210px;
-    }
-} */
+.el-menu{width:100%;background: #5f6d7e;
+	.el-menu-item{color:#fff;padding: 0 20px !important;@include font-size(menu);
+		i{color: #fff;}
+		&:hover{background: #3B4D67;}
+		&.is-active{background: #3B4D67;}
+	}
+}
 
 .main{
 	.main-content{padding: 20px 24px;}
@@ -25,6 +25,22 @@ img {display: block; border: 0; vertical-align: middle;margin: 0 auto; will-chan
 	}
 }
 
+.article-info{
+	.title{font-size: 18px; line-height: 28px;}
+	.type{display: block; width: 26px; height: 26px; line-height: 26px; margin-right: 10px;  text-align: center; border-radius: 50%;font-size: 12px;
+		&.type-success{color:$color-success; border:1px solid $color-success;}
+		&.type-danger{color:$color-danger; border:1px solid $color-danger;}
+	}
+    .title-info{font-weight: 700;}
+    .abstract{font-size: 16px; color: #555;margin-top: 4px;text-align:justify;text-justify:inter-ideograph;}
+    .other-info{
+    	font-size: 13px;color: #b3b3b3;text-align: right;margin-top: 4px;
+    	span{margin-left: 10px;}
+		i{margin-right: 5px;}
+    }
+}
+
+.line-clamp-1{overflow: hidden;text-overflow:ellipsis;white-space: nowrap;}
 
 .text-success{color: $color-success;}
 .text-warning{color: $color-warning;}
@@ -35,5 +51,15 @@ img {display: block; border: 0; vertical-align: middle;margin: 0 auto; will-chan
 .bg-warning{color:#ffffff; background: $color-warning;}
 .bg-danger{color:#ffffff; background: $color-danger;}
 .bg-info{color:#ffffff; background: $color-info;}
+
+/* 适配 start */
+@media screen and (min-width: 992px) and (max-width: 1200px){
+	.main{margin-top: 71px;}
+}
+@media only screen and (max-width: 991px){
+	.main{margin-top: 124px;}
+}
+/* 适配 end */
+
 
 

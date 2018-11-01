@@ -1,11 +1,13 @@
 <template>
 	<div class="home flex">
+		<top-menu></top-menu>
 		<left-menu></left-menu>
 		<router-view></router-view>
 	</div>
 </template>
 
 <script type="text/ecmascript-6">
+	import TopMenu from '../components/TopMenu'
 	import LeftMenu from '../components/LeftMenu'
 	export default {
 		data() {
@@ -14,6 +16,7 @@
 			};
 		},
 		components: {
+			TopMenu,
 			LeftMenu
 		},
 		computed: {

@@ -2,36 +2,29 @@
 	<el-row class="main flex-item">
 		<el-col :sm="24" :md="17">
 			<transition name="fade" mode="out-in" appear>
-				<div class="article-list" :style="{'height': clientHeight}">
-					<div class="main-content article-item">
-						<div class="title flex">
-							<span class="type">原</span>
-							<span class="title-info flex-item">将博客搬至CSDN将博客搬至CSDN将博客搬至CSDN将博客搬至CSDN将博客搬至CSDN将博客搬至CSDN将博客搬至CSDN将博客搬至CSDN将博客搬至CSDN</span>
+
+				<div class="article-list-box" :style="{'min-height': clientHeight}">
+					<div class="main-content attr-name" v-if="searchKeywords">全部文章&nbsp;&gt;&nbsp;前端</div>
+
+					<div class="article-list article-info">
+						<div class="main-content article-item" v-for="item in articleData">
+							<div class="title flex">
+								<span :class="{'type type-success': item.typeId==1, 'type type-danger': item.typeId==2}">{{item.typeId==1?'原':'转'}}</span>
+								<span class="title-info flex-item">{{item.title}}</span>
+							</div>
+							<div class="line-clamp-1 abstract" v-html="item.abstract"></div>
+							<div class="other-info">
+								<span><i class="el-icon-date"></i>{{item.createTime}}</span>
+							</div>
 						</div>
-						<div class="abstract">
-							最近打算将博客搬到CSDN里，在此发出通知，声明一下。
-						</div>
-						<div class="other-info">
-							<span><i class="el-icon-date"></i>2018-10-08</span>
-							<span><i class="el-icon-tickets"></i>npm,vue,vue3.0,前后端分离</span>
-						</div>
+
 					</div>
 
-					<div class="main-content article-item">
-						<div class="title flex">
-							<span class="type">原</span>
-							<span class="title-info flex-item">将博客搬至CSDN将博客搬至CSDN将博客搬至CSDN将博客搬至CSDN将博客搬至CSDN将博客搬至CSDN将博客搬至CSDN将博客搬至CSDN将博客搬至CSDN</span>
-						</div>
-						<div class="abstract">
-							最近打算将博客搬到CSDN里，在此发出通知，声明一下。
-						</div>
-						<div class="other-info">
-							<span><i class="el-icon-date"></i>2018-10-08</span>
-							<span><i class="el-icon-tickets"></i>npm,vue,vue3.0,前后端分离</span>
-						</div>
-					</div>
+					<el-pagination :current-page.sync="curPage" :page-sizes="[pageSize, 20, 30]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageTotal" @size-change="handleSizeChange" @current-change="handleCurrentChange" align="right"></el-pagination>
 
 				</div>
+
+
 			</transition>
 		</el-col>
 		<el-col :md="7">
@@ -42,10 +35,22 @@
 
 <script type="text/ecmascript-6">
 	import RightSidebar from '../components/RightSidebar'
+	import {articleQueryArticle} from "../config/interface.js"
 	export default {
 		data() {
 			return {
-				
+				searchKeywords: null,
+				pageNum: 1, // 请求第几页
+				pageSize: 10, // 每页请求多少条
+				pageTotal: 0, // 总共多少条数据
+				curPage: 1, // 初始时在第几页
+				articleData: [], // 列表数据
+				queryFlag: { // 是否可发送请求
+			    	article: true
+			    },
+			    loading: { // 是否显示loading
+			    	table: false
+			    }
 			};
 		},
 		components: {
@@ -57,7 +62,7 @@
 			}
 		},
 		created() {
-
+			this.init()
 		},
 		watch: {
 
@@ -67,7 +72,57 @@
 			
 		},
 		methods: {
+			// 初始化
+			init(){
+				this.queryArticle()
+			},
+			queryArticle() {
+				const url = articleQueryArticle;
+				const _this = this;
+				if(this.queryFlag.article == true){
+            		this.queryFlag.article = false
+            		this.loading.table = true
+            		let params = {
+            			pageNum: this.pageNum,
+            			pageSize: this.pageSize,
+            			searchKeywords: this.searchKeywords
+            		}
+            		fetch(url,params)
+					.then(res =>{
+						if(res.code == 10000){
+							let data=res.data
 
+							let list = data.list
+							let list_length = list.length
+
+							if(list_length > 0){
+								list.forEach(function(value,index){
+									value.abstract = value.content.toString().substr(0, 100)
+								})
+							}
+
+							
+
+
+							_this.articleData = data.list
+							_this.pageTotal = data.count
+
+							_this.queryFlag.article = true
+							_this.loading.table = false
+						}
+					})
+				}
+			},
+			// 改变pageSize
+			handleSizeChange(val){
+				this.pageSize = val;
+				this.queryArticle()
+			},
+			// 改变pageNum
+			handleCurrentChange(val) {
+				this.pageNum = val;
+		    	this.queryArticle()
+		  	}
 		},
 		// destroyed:组件的数据绑定、监听...都去掉了,只剩下dom空壳，这里也可以善后
 		beforeDestroy() {
@@ -78,18 +133,10 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" rel="stylesheet/scss">
-	.article-list{
+	.article-list-box{
 		margin: 0 15px; background-color: #fff;
-		.article-item{ border-bottom: 1px solid $color-gray-light;
-			.title{font-size: 18px; line-height: 28px;}
-			.type{display: block; width: 26px;
-		    height: 26px; line-height: 26px; margin-right: 10px; color:$color-success; text-align: center; border-radius: 50%;border:1px solid $color-success;font-size: 12px;}
-		    .title-info{font-weight: 700;}
-		    .abstract{font-size: 16px; color: #555;margin-top: 4px;text-align:justify;text-justify:inter-ideograph;}
-		    .other-info{
-		    	font-size: 13px;color: #b3b3b3;text-align: right;margin-top: 4px;
-				i{margin-right: 5px;}
-		    }
-		}
+		.attr-name,.article-item{ border-bottom: 1px solid $color-gray-light;}
+		.abstract{width: 100%;}
+		.el-pagination{padding:50px 24px 50px 0;}
 	}
 </style>

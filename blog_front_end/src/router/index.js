@@ -13,17 +13,13 @@ export default new Router({
 	routes: [
 		{
 			path: '/',
-			name: 'Index',
+			name: 'Home',
 			component: Home,
 			children: [
 			    // 刷新中转页面
-				{ path: '/refresh', component: refresh, name: 'refresh' },
-				{
-			        path: '/',
-			        name: 'main',
-			        component: main
-		      	},
-		      	{ path: '/article', component: article, name: 'article' }
+				{ path: '/refresh', name: 'refresh', component: refresh},
+				{ path: '/', name: 'Main', component: main },
+		      	{ path: '/Article', name: 'article', component: article}
 			]
 		}
 	]

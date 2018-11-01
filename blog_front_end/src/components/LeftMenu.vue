@@ -9,7 +9,6 @@
     	<el-menu class="aside"
           :default-active="$route.path" :router="true">
         <el-menu-item  v-for="(item, index) in  menu" :index="item.url"  :key="index"  @click="handleMenuSelect(item.url)">
-          <i :class="item.icon"></i>
           <span slot="title">{{item.name}}</span>
         </el-menu-item>
       </el-menu>
@@ -23,28 +22,7 @@
 	export default {
 		data() {
 			return {
-        menu: [
-          {
-            url: '/home/article/manage',
-            icon: 'el-icon-document',
-            name: '文章管理'
-          },
-          {
-            url: '/home/article/type',
-            icon: 'el-icon-bell',
-            name: '文章类别'
-          },
-          {
-            url: '/home/article/classify',
-            icon: 'el-icon-menu',
-            name: '分类管理'
-          },
-          {
-            url: '/home/article/tag',
-            icon: 'el-icon-star-off',
-            name: '标签管理'
-          }
-        ]
+        menu: this.$store.state.menu
 			}
 		},
 		computed: {
@@ -74,16 +52,14 @@
   .admin-wrap{
    
     .admin-avatar{
-       width:60%;height:auto; margin: 20px auto; border: 1px solid white; border-radius: 50%;overflow: hidden;
+       width:55%;height:auto; margin: 20px auto; border: 1px solid white; border-radius: 50%;overflow: hidden;
        img{width:100%;}
     }
     .admin-info{text-align: center; @include font-size(title);margin-bottom: 40px;}
 
   }
-  .el-menu{width:100%; background-color: #5f6d7e;
-    .el-menu-item{padding: 0 20px !important;color: #fff; @include font-size(menu);text-align: center;
-      i{color: #fff;}
-    }
+  .el-menu{
+    .el-menu-item{text-align: center;}
   }
 }
 </style>
