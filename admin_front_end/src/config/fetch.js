@@ -4,7 +4,7 @@ import store from '../store/index.js'
 import router from '../router/index.js'
 
 axios.defaults.timeout = 10000;
-axios.defaults.baseURL = 'http://blog.api.daipianpian.com/admin.php/admin';
+axios.defaults.baseURL = 'http://blog.api.daipianpian.com/admin';
 
 export const baseURL = axios.defaults.baseURL
 
