@@ -24,8 +24,8 @@
 	  			</el-collapse-item>
 	  		</el-collapse>
 	  		<div class="admin-search-box">
-	  			<el-input class="hidden-md-and-up" placeholder="请输入内容" v-model="searchKeywords">
-	  				<el-button slot="append" icon="el-icon-search"></el-button>
+	  			<el-input class="hidden-md-and-up" placeholder="请输入文章名称" v-model="searchKeywords">
+	  				<el-button slot="append" icon="el-icon-search" @click="searchArticle"></el-button>
 	  			</el-input>
 	  			<div class="hidden-sm-and-down admin-wrap clearboth float-right">
 					<div class="admin-avatar float-left"><img src="../assets/images/userAvatar@2x.png" alt=""></div>
@@ -37,21 +37,63 @@
 </template>
 
 <script type="text/ecmascript-6">
+	import {articleQueryArticle} from "../config/interface.js"
 	export default {
 		data() {
 			return {
 				menu: this.$store.state.menu,
-		        searchKeywords: ''
+		        searchKeywords: null,
+		        queryFlag: { // 是否可发送请求
+			    	article: true
+			    }
+			}
+		},
+		computed: {
+			pageNum: function() {
+				return this.$store.state.articlePageNum
+			},
+			pageSize: function() {
+				return this.$store.state.articlePageSize
 			}
 		},
 	    methods: {
-	      handleMenuSelect(path) {
-	        if (path != this.$route.path) {
-	          this.$router.push(path)
-	        }else{
-	          bs.shallowRefresh(this.$route.name)
-	        }
-	      }
+			handleMenuSelect(path) {
+				if (path != this.$route.path) {
+					this.$router.push(path)
+				}else{
+					bs.shallowRefresh(this.$route.name)
+				}
+			},
+			searchArticle(){
+				this.$store.dispatch('changeArticlePageNum',1);
+				const url = articleQueryArticle;
+				const _this = this;
+				if(this.queryFlag.article == true){
+            		this.queryFlag.article = false
+					let params = {
+						pageNum: this.pageNum,
+	            		pageSize: this.pageSize,
+						searchKeywords: this.searchKeywords
+					}
+	        		fetch(url,params)
+					.then(res =>{
+						if(res.code == 10000){
+							let data=res.data
+							let list = data.list
+							let list_length = list.length
+
+							if(list_length > 0){
+								list.forEach(function(value,index){
+									value.abstract = value.content.toString().substr(0, 100)
+								})
+							}
+							_this.$store.dispatch('changeArticle',data)
+							_this.$store.dispatch('changeArticleCurPage',1)
+							_this.queryFlag.article = true
+						}
+					})
+				}
+			}
 	    }
 	}
 </script>

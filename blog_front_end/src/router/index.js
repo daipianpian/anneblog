@@ -19,7 +19,7 @@ export default new Router({
 			    // 刷新中转页面
 				{ path: '/refresh', name: 'refresh', component: refresh},
 				{ path: '/', name: 'Main', component: main },
-		      	{ path: '/Article', name: 'article', component: article}
+		      	{ path: '/article', name: 'article', component: article}
 			]
 		}
 	]

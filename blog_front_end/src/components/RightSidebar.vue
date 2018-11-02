@@ -2,8 +2,8 @@
 	<div class="hidden-sm-and-down right-sidebar">
 		<!-- 搜索 start -->
 		<div class="main-content">
-			<el-input placeholder="请输入内容" v-model="searchKeywords">
-			    <el-button slot="append" icon="el-icon-search"></el-button>
+			<el-input placeholder="请输入文章名称" v-model="searchKeywords">
+			    <el-button slot="append" icon="el-icon-search" @click="searchArticle"></el-button>
 			</el-input>
 		</div>
 		<!-- 搜索 end -->
@@ -12,20 +12,16 @@
 		<div class="main-content">
 			<div class="title">文章分类</div>
 			<div class="info">
-				<div class="flex info-item">
-					<div class="flex-item">Bootstrap</div>
-					<div>1篇</div>
-				</div>
-				<div class="flex info-item">
-					<div class="flex-item">Bootstrap</div>
-					<div>1篇</div>
+				<div class="flex info-item" v-for="item in classifyList" @click="classifyArticle(item.id)">
+					<div class="flex-item">{{item.name}}</div>
+					<div>{{item.count}}篇</div>
 				</div>
 			</div>
-			<div class="btn-box">
+			<!-- <div class="btn-box">
 				<i class="el-icon-caret-bottom"></i>
 				<span>展示</span>
 			</div>
-			<!-- <div class="btn-box">
+			<div class="btn-box">
 				<i class="el-icon-caret-top"></i>
 				<span>收缩</span>
 			</div> -->
@@ -36,20 +32,16 @@
 		<div class="main-content">
 			<div class="title">归档</div>
 			<div class="info">
-				<div class="flex info-item">
-					<div class="flex-item">Bootstrap</div>
-					<div>1篇</div>
-				</div>
-				<div class="flex info-item">
-					<div class="flex-item">Bootstrap</div>
-					<div>1篇</div>
+				<div class="flex info-item" v-for="item in typeList" @click="typeArticle(item.id)">
+					<div class="flex-item">{{item.name}}</div>
+					<div>{{item.count}}篇</div>
 				</div>
 			</div>
-			<div class="btn-box">
+			<!-- <div class="btn-box">
 				<i class="el-icon-caret-bottom"></i>
 				<span>展示</span>
 			</div>
-			<!-- <div class="btn-box">
+			<div class="btn-box">
 				<i class="el-icon-caret-top"></i>
 				<span>收缩</span>
 			</div> -->
@@ -67,11 +59,11 @@
 					<div class="flex-item"><a href="https://blog.csdn.net/daipianpian">【一片天空】Bootstrap_Git_GitHub - CSDN博客</a></div>
 				</div>
 			</div>
-			<div class="btn-box">
+			<!-- <div class="btn-box">
 				<i class="el-icon-caret-bottom"></i>
 				<span>展示</span>
 			</div>
-			<!-- <div class="btn-box">
+			<div class="btn-box">
 				<i class="el-icon-caret-top"></i>
 				<span>收缩</span>
 			</div> -->
@@ -82,15 +74,160 @@
 </template>
 
 <script type="text/ecmascript-6">
+	import {queryClassifyType, articleQueryArticle, queryArticleByClassify, queryArticleByType} from "../config/interface.js"
 	export default {
 		data() {
 			return {
-				searchKeywords:''
+				searchKeywords:null,
+				classifyList: [], // 列表数据
+				typeList: [], // 列表数据
+				queryFlag: { // 是否可发送请求
+			    	query: true,
+			    	article: true
+			    },
+			    loading: { // 是否显示loading
+			    	table: false
+			    }
 			}
 		},
 		computed: {
+			pageNum: function() {
+				return this.$store.state.articlePageNum
+			},
+			pageSize: function() {
+				return this.$store.state.articlePageSize
+			}
+		},
+		created() {
+			this.init()
 		},
 	    methods: {
+	    	// 初始化
+			init(){
+				this.queryClassifyType()
+			},
+			queryClassifyType() {
+				const url = queryClassifyType;
+				const _this = this;
+				if(this.queryFlag.query == true){
+            		this.queryFlag.query = false
+            		this.loading.table = true
+            		let params = {}
+            		fetch(url,params)
+					.then(res =>{
+						if(res.code == 10000){
+							let data=res.data
+
+							let classifyList = data.classifyList
+							classifyList.forEach(function(value,index){
+								if(value.count > 0){
+									_this.classifyList.push(value)
+								}
+							})
+
+							let typeList = data.typeList
+							typeList.forEach(function(value,index){
+								if(value.count > 0){
+									_this.typeList.push(value)
+								}
+							})
+
+							_this.queryFlag.query = true
+							_this.loading.table = false
+						}
+					})
+				}
+			},
+			searchArticle(){
+				this.$store.dispatch('changeArticlePageNum',1);
+				const url = articleQueryArticle;
+				const _this = this;
+				if(this.queryFlag.article == true){
+            		this.queryFlag.article = false
+					let params = {
+						pageNum: this.pageNum,
+	            		pageSize: this.pageSize,
+						searchKeywords: this.searchKeywords
+					}
+	        		fetch(url,params)
+					.then(res =>{
+						if(res.code == 10000){
+							let data=res.data
+							let list = data.list
+							let list_length = list.length
+
+							if(list_length > 0){
+								list.forEach(function(value,index){
+									value.abstract = value.content.toString().substr(0, 100)
+								})
+							}
+							_this.$store.dispatch('changeArticle',data)
+							_this.$store.dispatch('changeArticleCurPage',1)
+							_this.queryFlag.article = true
+						}
+					})
+				}
+			},
+			classifyArticle(classifyId){
+				this.$store.dispatch('changeArticlePageNum',1);
+				const url = queryArticleByClassify;
+				const _this = this;
+				if(this.queryFlag.article == true){
+            		this.queryFlag.article = false
+					let params = {
+						pageNum: this.pageNum,
+	            		pageSize: this.pageSize,
+						classifyId: classifyId
+					}
+	        		fetch(url,params)
+					.then(res =>{
+						if(res.code == 10000){
+							let data=res.data
+							let list = data.list
+							let list_length = list.length
+
+							if(list_length > 0){
+								list.forEach(function(value,index){
+									value.abstract = value.content.toString().substr(0, 100)
+								})
+							}
+							_this.$store.dispatch('changeArticle',data)
+							_this.$store.dispatch('changeArticleCurPage',1)
+							_this.queryFlag.article = true
+						}
+					})
+				}
+			},
+			typeArticle(typeId){
+				this.$store.dispatch('changeArticlePageNum',1);
+				const url = queryArticleByType;
+				const _this = this;
+				if(this.queryFlag.article == true){
+            		this.queryFlag.article = false
+					let params = {
+						pageNum: this.pageNum,
+	            		pageSize: this.pageSize,
+						typeId: typeId
+					}
+	        		fetch(url,params)
+					.then(res =>{
+						if(res.code == 10000){
+							let data=res.data
+							let list = data.list
+							let list_length = list.length
+
+							if(list_length > 0){
+								list.forEach(function(value,index){
+									value.abstract = value.content.toString().substr(0, 100)
+								})
+							}
+							_this.$store.dispatch('changeArticle',data)
+							_this.$store.dispatch('changeArticleCurPage',1)
+							_this.queryFlag.article = true
+						}
+					})
+				}
+			}
 	    }
 	}
 </script>
@@ -100,18 +237,21 @@
 	.right-sidebar{margin-right: 15px;
 		.main-content{
 			.title{ padding: 0 10px; margin-bottom: 15px; font-size: 18px; color: $color-gray; border-left: 4px solid $color-main;}
-			.info{font-size: 14px; padding-bottom: 5px; border-bottom: 1px dashed $color-gray-light;}
-			.info-item{margin-bottom: 5px; color: $color-gray-medium;}
+			.info{font-size: 14px;}
+			.info-item{margin-bottom: 5px; color: $color-gray-medium;
+				&:hover{color:$color-main;cursor:pointer;}
+			}
 			.btn-box{
 		    height: 44px;
 		    box-sizing: border-box;
 		    border-bottom-left-radius: 4px;
 		    border-bottom-right-radius: 4px;
 		    text-align: center;
-		    margin-top: -1px;
+		    margin-top: 5px;
 		    color: #d3dce6;
 		    cursor: pointer;
 		    position: relative;
+		    border-top: 1px dashed #E5E5E5;
 				i {
 				    font-size: 16px;
 				    line-height: 44px;

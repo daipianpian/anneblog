@@ -16,13 +16,14 @@ const state = {
 		},
 		{
 			url: '/home/article/manage',
-			name: '文章管理'
-		},
-		{
-			url: '/home/article/type',
-			name: '文章类别'
+			name: '管理'
 		}
-    ]
+    ],
+    articlePageNum: 1, // 请求第几页
+	articlePageSize: 10, // 每页请求多少条
+	articlePageTotal: 0, // 总共多少条数据
+	articleCurPage: 1, // 初始时在第几页
+    articleList: []
 }
 
 export default new Vuex.Store({
