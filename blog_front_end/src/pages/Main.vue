@@ -4,7 +4,7 @@
 			<transition name="fade" mode="out-in" appear>
 
 				<div class="article-list-box" :style="{'min-height': clientHeight}">
-					<div class="main-content attr-name" v-if="searchKeywords">全部文章&nbsp;&gt;&nbsp;前端</div>
+					<div class="main-content attr-name" v-if="keywords">全部文章&nbsp;&gt;&nbsp;{{keywords}}</div>
 
 					<div class="article-list article-info" v-loading="loading.article">
 						<div class="main-content article-item" v-for="item in articleList">
@@ -12,7 +12,7 @@
 								<span :class="{'type type-success': item.typeId==1, 'type type-danger': item.typeId==2}">{{item.typeId==1?'原':'转'}}</span>
 								<span class="title-info flex-item">{{item.title}}</span>
 							</div>
-							<div class="line-clamp-1 abstract" v-html="item.abstract"></div>
+							<div class="abstract">{{item.abstract}}...</div>
 							<div class="other-info">
 								<span><i class="el-icon-date"></i>{{item.createTime}}</span>
 							</div>
@@ -39,7 +39,6 @@
 	export default {
 		data() {
 			return {
-				searchKeywords: null,
 				queryFlag: { // 是否可发送请求
 			    	article: true
 			    },
@@ -54,6 +53,9 @@
 		computed: {
 			clientHeight: function() {
 				return this.$store.state.clientHeight+'px'
+			},
+			searchKeywords: function() {
+				return this.$store.state.searchKeywords
 			},
 			pageNum: function() {
 				return this.$store.state.articlePageNum
@@ -71,6 +73,9 @@
 			    set: function (newValue) {
 			      this.$store.state.articleCurPage = newValue
 			    }
+			},
+			keywords: function() {
+				return this.$store.state.keywords
 			},
 			articleList: function() {
 				return this.$store.state.articleList
@@ -113,7 +118,7 @@
 
 							if(list_length > 0){
 								list.forEach(function(value,index){
-									value.abstract = value.content.toString().substr(0, 100)
+									value.abstract = value.content.replace(/<[^>]*>|/g,"").toString().substr(0, 100)
 								})
 							}
 
@@ -163,7 +168,7 @@
 			.title:hover{cursor: pointer;}
 		}
 		.attr-name,.article-item{ border-bottom: 1px solid $color-gray-light;}
-		.abstract{width: 100%;}
+		/* .abstract{width: 100%;} */
 		.el-pagination{padding:50px 24px 50px 0;}
 	}
 </style>

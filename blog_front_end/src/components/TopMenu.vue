@@ -5,24 +5,19 @@
 			<div class="admin-info float-right">一片天空</div>
 		</div>
 		<div class="menu-wrap">
-			<el-collapse accordion class="menu-collapse">
-	  			<el-collapse-item>
-	  				<template slot="title">
-				    	<div class="menu-btn">
-				    		<span class="icon-bar"></span>
-		                    <span class="icon-bar"></span>
-		                    <span class="icon-bar"></span>
-				    	</div>
-				    </template>
-				    <el-menu class="aside"
-				          :default-active="$route.path" :router="true">
-				        <el-menu-item  v-for="(item, index) in  menu" :index="item.url"  :key="index"  @click="handleMenuSelect(item.url)">
-				          <i :class="item.icon"></i>
-				          <span slot="title">{{item.name}}</span>
-				        </el-menu-item>
-				    </el-menu>
-	  			</el-collapse-item>
-	  		</el-collapse>
+			<el-dropdown trigger="click">
+		      <span class="el-dropdown-link">
+		        <div class="menu-btn">
+		    		<span class="icon-bar"></span>
+			        <span class="icon-bar"></span>
+			        <span class="icon-bar"></span>
+		    	</div>
+		      </span>
+		      <el-dropdown-menu class="hidden-lg-and-up" slot="dropdown">
+		        <el-dropdown-item><a href="/">首页</a></el-dropdown-item>
+		        <el-dropdown-item><a href="http://blog.admin.daipianpian.com/">管理</a></el-dropdown-item>
+		      </el-dropdown-menu>
+		    </el-dropdown>
 	  		<div class="admin-search-box">
 	  			<el-input class="hidden-md-and-up" placeholder="请输入文章名称" v-model="searchKeywords">
 	  				<el-button slot="append" icon="el-icon-search" @click="searchArticle"></el-button>
@@ -42,13 +37,20 @@
 		data() {
 			return {
 				menu: this.$store.state.menu,
-		        searchKeywords: null,
 		        queryFlag: { // 是否可发送请求
 			    	article: true
 			    }
 			}
 		},
 		computed: {
+			searchKeywords: {
+				get: function () {
+			      return this.$store.state.searchKeywords
+			    },
+			    set: function (newValue) {
+			      this.$store.state.searchKeywords = newValue
+			    }
+			},
 			pageNum: function() {
 				return this.$store.state.articlePageNum
 			},
@@ -66,6 +68,7 @@
 			},
 			searchArticle(){
 				this.$store.dispatch('changeArticlePageNum',1);
+
 				const url = articleQueryArticle;
 				const _this = this;
 				if(this.queryFlag.article == true){
@@ -84,15 +87,24 @@
 
 							if(list_length > 0){
 								list.forEach(function(value,index){
-									value.abstract = value.content.toString().substr(0, 100)
+									value.abstract = value.content.replace(/<[^>]*>|/g,"").toString().substr(0, 100)
 								})
 							}
+							
+							_this.$store.dispatch('changeSearchKeywords',this.searchKeywords);
+							_this.$store.dispatch('changeKeywords',data.keywords);
 							_this.$store.dispatch('changeArticle',data)
 							_this.$store.dispatch('changeArticleCurPage',1)
 							_this.queryFlag.article = true
 						}
 					})
 				}
+			},
+			handleMenu(){
+				this.handleChange()
+			},
+			handleChange(val){
+				console.log(val);
 			}
 	    }
 	}
@@ -107,9 +119,9 @@
 	}
 	.admin-info{line-height: 30px; font-size: 14px;}
 	.menu-wrap{position:relative}
-	.menu-collapse{
-		position:relative;
-		.menu-btn{position: relative;
+
+
+	.menu-btn{position: relative;
 		    float: left;
 		    padding: 9px 10px;
 		    margin-top: 12px;
@@ -119,20 +131,26 @@
 		    background-image: none;
 		    border: 1px solid #5f6d7e;
 		    border-radius: 4px;
+		    cursor: pointer;
 			.icon-bar{ display: block; width: 22px; height: 2px; border-radius: 1px; background:#5f6d7e;
 				&+.icon-bar {margin-top: 4px;}
 			}
 		}
-		.el-collapse-item__header{height:60px;line-height: 60px;}
-		.el-collapse-item__content{color: #fff; background:#5f6d7e;}
-		.el-menu{
-			.el-menu-item{text-align: left;}
-		}
-		
-	}
+
+	
+
 	.admin-search-box{position:absolute; width:50%;height:48px; padding-right: 15px; top:1px;right:0;background:#fff;
 		.el-input-group{margin-top: 10px;}
 		.admin-wrap{margin:14px auto 0;padding:0}
 	}
 }
+
+.el-dropdown-menu{width:100%;margin:0;left:0 !important;padding:0;border:none;border-radius:0;}
+.el-dropdown-menu__item{height: 56px;line-height: 56px;color: #fff;
+background: #5f6d7e;
+}
+.el-dropdown-menu__item:focus, .el-dropdown-menu__item:not(.is-disabled):hover{    background: #3B4D67;
+    }
+.el-popper[x-placement^=bottom] .popper__arrow{display:none}
+.el-popper[x-placement^=bottom]{margin-top: 0;}
 </style>

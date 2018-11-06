@@ -19,10 +19,12 @@ const state = {
 			name: '管理'
 		}
     ],
+    searchKeywords: null,
     articlePageNum: 1, // 请求第几页
 	articlePageSize: 10, // 每页请求多少条
 	articlePageTotal: 0, // 总共多少条数据
 	articleCurPage: 1, // 初始时在第几页
+	keywords: null,
     articleList: []
 }
 

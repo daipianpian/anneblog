@@ -4,6 +4,9 @@ const actions = {
 	changeClientWh({commit}, clientWh) {
 		commit(types.CHANGE_CLIENT_WH, clientWh)
 	},
+	changeSearchKeywords({commit}, searchKeywords) {
+		commit(types.CHANGE_SEARCHKEYWORDS, searchKeywords)
+	},
 	changeArticle({commit}, data) {
 		commit(types.CHANGE_ARTICLE, data)
 	},

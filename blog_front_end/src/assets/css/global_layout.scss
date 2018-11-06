@@ -2,6 +2,8 @@
 @charset "UTF-8";
 html,body { margin: 0; padding: 0; color: $color-black; background: $color-bg; font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, SimSun, sans-serif; -webkit-font-smoothing: antialiased; }
 img {display: block; border: 0; vertical-align: middle;margin: 0 auto; will-change: transform; }
+a{text-decoration: none;color:#fff;}
+ul,ol{list-style:none}
 
 .flex {display: -webkit-box;display: -webkit-flex;display: flex;}
 .flex-item {-webkit-box-flex: 1;-webkit-flex: 1;flex: 1;}

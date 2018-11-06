@@ -5,8 +5,12 @@ const mutations = {
 		state.clientWidth = clientWh.clientWidth;
 		state.clientHeight = clientWh.clientHeight;
 	},
+	[types.CHANGE_SEARCHKEYWORDS] (state, searchKeywords) {
+		state.searchKeywords = searchKeywords;
+	},
 	[types.CHANGE_ARTICLE] (state, data) {
 		state.articlePageTotal = data.count;
+		state.keywords = data.keywords;
 		state.articleList = data.list;
 	},
 	[types.CHANGE_ARTICLE_PAGENUM] (state, pageNum) {

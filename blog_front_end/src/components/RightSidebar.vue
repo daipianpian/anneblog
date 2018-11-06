@@ -30,9 +30,9 @@
 
 		<!-- 归档 start -->
 		<div class="main-content">
-			<div class="title">归档</div>
+			<div class="title">标签</div>
 			<div class="info">
-				<div class="flex info-item" v-for="item in typeList" @click="typeArticle(item.id)">
+				<div class="flex info-item" v-for="item in tagList" @click="tagArticle(item.id)">
 					<div class="flex-item">{{item.name}}</div>
 					<div>{{item.count}}篇</div>
 				</div>
@@ -74,13 +74,12 @@
 </template>
 
 <script type="text/ecmascript-6">
-	import {queryClassifyType, articleQueryArticle, queryArticleByClassify, queryArticleByType} from "../config/interface.js"
+	import {queryClassifyTag, articleQueryArticle, queryArticleByClassify, queryArticleByTag} from "../config/interface.js"
 	export default {
 		data() {
 			return {
-				searchKeywords:null,
 				classifyList: [], // 列表数据
-				typeList: [], // 列表数据
+				tagList: [], // 列表数据
 				queryFlag: { // 是否可发送请求
 			    	query: true,
 			    	article: true
@@ -91,6 +90,14 @@
 			}
 		},
 		computed: {
+			searchKeywords: {
+				get: function () {
+			      return this.$store.state.searchKeywords
+			    },
+			    set: function (newValue) {
+			      this.$store.state.searchKeywords = newValue
+			    }
+			},
 			pageNum: function() {
 				return this.$store.state.articlePageNum
 			},
@@ -104,10 +111,10 @@
 	    methods: {
 	    	// 初始化
 			init(){
-				this.queryClassifyType()
+				this.queryClassifyTag()
 			},
-			queryClassifyType() {
-				const url = queryClassifyType;
+			queryClassifyTag() {
+				const url = queryClassifyTag;
 				const _this = this;
 				if(this.queryFlag.query == true){
             		this.queryFlag.query = false
@@ -125,10 +132,10 @@
 								}
 							})
 
-							let typeList = data.typeList
-							typeList.forEach(function(value,index){
+							let tagList = data.tagList
+							tagList.forEach(function(value,index){
 								if(value.count > 0){
-									_this.typeList.push(value)
+									_this.tagList.push(value)
 								}
 							})
 
@@ -158,9 +165,11 @@
 
 							if(list_length > 0){
 								list.forEach(function(value,index){
-									value.abstract = value.content.toString().substr(0, 100)
+									value.abstract = value.content.replace(/<[^>]*>|/g,"").toString().substr(0, 100)
 								})
 							}
+
+							_this.$store.dispatch('changeSearchKeywords',this.searchKeywords);
 							_this.$store.dispatch('changeArticle',data)
 							_this.$store.dispatch('changeArticleCurPage',1)
 							_this.queryFlag.article = true
@@ -188,9 +197,11 @@
 
 							if(list_length > 0){
 								list.forEach(function(value,index){
-									value.abstract = value.content.toString().substr(0, 100)
+									value.abstract = value.content.replace(/<[^>]*>|/g,"").toString().substr(0, 100)
 								})
 							}
+
+							_this.$store.dispatch('changeSearchKeywords',null);
 							_this.$store.dispatch('changeArticle',data)
 							_this.$store.dispatch('changeArticleCurPage',1)
 							_this.queryFlag.article = true
@@ -198,16 +209,16 @@
 					})
 				}
 			},
-			typeArticle(typeId){
+			tagArticle(tagId){
 				this.$store.dispatch('changeArticlePageNum',1);
-				const url = queryArticleByType;
+				const url = queryArticleByTag;
 				const _this = this;
 				if(this.queryFlag.article == true){
             		this.queryFlag.article = false
 					let params = {
 						pageNum: this.pageNum,
 	            		pageSize: this.pageSize,
-						typeId: typeId
+						tagId: tagId
 					}
 	        		fetch(url,params)
 					.then(res =>{
@@ -218,9 +229,11 @@
 
 							if(list_length > 0){
 								list.forEach(function(value,index){
-									value.abstract = value.content.toString().substr(0, 100)
+									value.abstract = value.content.replace(/<[^>]*>|/g,"").toString().substr(0, 100)
 								})
 							}
+
+							/*_this.$store.dispatch('changeSearchKeywords',null);*/
 							_this.$store.dispatch('changeArticle',data)
 							_this.$store.dispatch('changeArticleCurPage',1)
 							_this.queryFlag.article = true

@@ -6,12 +6,16 @@
         <div class="admin-avatar"><img src="../assets/images/userAvatar@2x.png" alt=""></div>
         <div class="admin-info">一片天空</div>
       </div>
-    	<el-menu class="aside"
-          :default-active="$route.path" :router="true">
-        <el-menu-item  v-for="(item, index) in  menu" :index="item.url"  :key="index"  @click="handleMenuSelect(item.url)">
-          <span slot="title">{{item.name}}</span>
-        </el-menu-item>
-      </el-menu>
+    	<!-- <el-menu class="aside"
+                :default-active="$route.path" :router="true">
+              <el-menu-item  v-for="(item, index) in  menu" :index="item.url"  :key="index"  @click="handleMenuSelect(item.url)">
+                <span slot="title">{{item.name}}</span>
+              </el-menu-item>
+            </el-menu> -->
+      <ul class="aside el-menu">
+        <li class="el-menu-item is-active"><a href="/">首页</a></li>
+        <li class="el-menu-item"><a href="http://blog.admin.daipianpian.com/">管理</a></li>
+      </ul>
     </div>
 
 
