@@ -383,5 +383,9 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" rel="stylesheet/scss">
-
+.article-dialog{
+	.quill-editor{width: 550px;}
+	.quill-editor .ql-container { height: 400px; }
+	.quill-editor-uploader-img{position:absolute;top:0;left:0;opacity: 0;z-index: -9999;}
+}
 </style>

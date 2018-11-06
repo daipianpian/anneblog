@@ -1,6 +1,7 @@
 // 接口配置信息
 // export const baseURL = 'http://api.test.biz.jioao.cn' 
 
+export const commonUpload = '/Common/upload' // 上传
 
 export const login = '/Login/login' // 登入
 export const loginOut = '/Login/logout' // 登出

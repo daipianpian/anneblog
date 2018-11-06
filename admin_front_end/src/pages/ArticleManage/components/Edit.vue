@@ -47,11 +47,27 @@
 		    <el-button size="small" @click="onCancel">取 消</el-button>
 		</div>
 
+		<el-upload
+			class="quill-editor-uploader-img"
+			id="uploader-img"
+    		ref="upload"
+		  	:action="upLoad.actionUrl"
+		  	:headers="upLoad.headers"
+		  	:data="upLoad.upLoadData"
+		  	accept="image/png, image/gif, image/jpg, image/jpeg"
+		  	name="fileName"
+		  	:show-file-list="false"
+		  	:on-success="handleUploadSuccess"
+		  	:on-remove="handleRemove"
+		  	:on-error="handleError">
+			  	<el-button size="small" type="primary">点击上传</el-button>
+		</el-upload>
+
 	</el-dialog>
 </template>
 
 <script type="text/ecmascript-6">
-	import {typeQueryType, classifyQueryClassify, tagQueryTag, articleEditArticle, articleUpdateArticle} from "../../../config/interface.js"
+	import {typeQueryType, classifyQueryClassify, tagQueryTag, articleEditArticle, articleUpdateArticle, commonUpload} from "../../../config/interface.js"
 	export default {
         props: {
         },
@@ -71,7 +87,7 @@
 				  [{'color': []}, {'background': []}],          // dropdown with defaults from theme
 				  [{'font': []}],
 				  [{'align': []}],
-				  ['link', 'image', 'video'],
+				  ['link', 'image'],
 				  ['clean']                                         // remove formatting button
 			];
             return {
@@ -106,7 +122,7 @@
 					modules: {
 						toolbar: {
 							container: toolbarOptions,  // 工具栏
-							/*handlers: {
+							handlers: {
 								'image': function (value) {
 									if (value) {
 										document.querySelector('#uploader-img input').click()
@@ -114,7 +130,7 @@
 										this.quill.format('image', false);
 									}
 								}
-							}*/
+							}
 						}
 					}
 			    },
@@ -146,7 +162,17 @@
         				pageNum: 1,
         				pageSize: 10
         			}
-        		}
+        		},
+        		upLoad: {
+		        	actionUrl: baseURL+commonUpload,
+			        headers: {
+			        	userToken: this.$store.state.token
+			        },
+		        	upLoadData: {
+			        	catalog: 0,
+			        	adminId: this.$store.state.adminId
+			        }
+		        }
             }
         },
 		methods: {
@@ -328,6 +354,40 @@
 				this.checkAll = checkedCount === this.classifyList.length;
 				this.isIndeterminate = checkedCount > 0 && checkedCount < this.classifyList.length;
 			},
+			// 上传图片成功
+		    handleUploadSuccess(response, file, fileList){
+		    	/*console.log('response='+JSON.stringify(response))*/
+		    	let quill = this.$refs.QuillEditor.quill
+		    	if(response.code == 10000){
+		    		// 获取富文本组件实例
+                	
+			    	let image = response.data;
+			    	/*this.formDatas.icoPath = [];
+			    	this.formDatas.icoPath.push({url:response.data})*/
+			    	// 获取光标所在位置
+                    let length = quill.getSelection().index;
+                    // 插入图片  res.info为服务器返回的图片地址
+                    quill.insertEmbed(length, 'image', image)
+                    // 调整光标到最后
+                    quill.setSelection(length + 1)
+			    }else{
+			    	if(response.code == 20100){
+				    	router.replace({
+					        path: '/'
+					    });
+				    }else{
+				    	bs.toast(response.message,'error',false)
+				    }
+			    }
+		    },
+		    // 删除已上传的图片
+			handleRemove(file, fileList) {
+		        // console.log(file, fileList);
+		    },
+		    //上传图片发生错误
+		    handleError(file,fileList){
+		    	this.$message.error('上传失败请重新上传');
+		    },
 			onSubmit(formDatas){
 				this.$refs[formDatas].validate((valid) => {
 					if (valid) {
@@ -369,8 +429,4 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" rel="stylesheet/scss">
-.article-dialog{
-	.quill-editor{width: 550px;}
-	.quill-editor .ql-container { height: 400px; }
-}
 </style>
