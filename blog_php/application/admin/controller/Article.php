@@ -1,7 +1,6 @@
 <?php
 namespace app\admin\controller;
 use think\Request;
-use think\Session;
 
 class Article
 {
@@ -56,7 +55,6 @@ class Article
                     if($result){
                         $callback = [
                             'code' => 10000,
-                            'sessionAdminId' =>$sessionAdminId,
                             'message' => '成功'
                         ];
                         echo json($callback)->getcontent();
@@ -433,12 +431,9 @@ class Article
 
                 /*$data['list'] = $list;*/
 
-                $sessionAdmin = Session::get();
-
                 $callback = [
                     'code' => 10000,
                     'data' => $data,
-                    'sessionAdmin' => $sessionAdmin,
                     'message' => '成功'
                 ];
                 echo json($callback)->getcontent();

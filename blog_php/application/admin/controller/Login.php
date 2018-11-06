@@ -1,7 +1,6 @@
 <?php
 namespace app\admin\controller;
 use think\Request;
-use think\Session;
 
 class Login
 {
@@ -12,51 +11,55 @@ class Login
     }
     public function login()
     {
-        $request = Request::instance();
-        $postParams = $request->post();
-
-        $name = $postParams['name'];
-        $password  = $postParams['password'];
-        $curtime = date('Y-m-d H:i:s');
-
-        $condition = [
-            'name' => $name,
-            'password' => $password,
-            'status' => 1
-        ];
-
         $adminDB= db('admin');
+        $request = Request::instance();
 
-        $resultQuery = $adminDB->where($condition)->find();
+        if ($request->isPost()){
+            $postParams = $request->post();
 
-        $updateCondition = [
-            'id' => $resultQuery['id']
-        ];
+            $name = $postParams['name'];
+            $password  = $postParams['password'];
+            $curtime = date('Y-m-d H:i:s');
 
-        $data = [
-            'token' => create_uuid(),
-            'updateTime' => $curtime
-        ];
-        $resultUpdate = $adminDB->where($updateCondition)->update($data);
-
-        if($updateCondition && $resultUpdate){
-
-            $resultQuery['token'] = $data['token'];
-
-            $callback = [
-                'code' => 10000,
-                'data' => $resultQuery,
-                'message' => '成功'
+            $condition = [
+                'name' => $name,
+                'password' => $password,
+                'status' => 1
             ];
-            echo json($callback)->getcontent();
-        }else{
-            $callback = [
-                'code' => 20000,
-                'message' => '请求失败'
+
+            
+
+            $resultQuery = $adminDB->where($condition)->find();
+
+            $updateCondition = [
+                'id' => $resultQuery['id']
             ];
-            echo json($callback)->getcontent();
+
+            $data = [
+                'token' => create_uuid(),
+                'updateTime' => $curtime
+            ];
+            $resultUpdate = $adminDB->where($updateCondition)->update($data);
+
+            if($updateCondition && $resultUpdate){
+
+                $resultQuery['token'] = $data['token'];
+
+                $callback = [
+                    'code' => 10000,
+                    'data' => $resultQuery,
+                    'message' => '成功'
+                ];
+                echo json($callback)->getcontent();
+            }else{
+                $callback = [
+                    'code' => 20000,
+                    'message' => '请求失败'
+                ];
+                echo json($callback)->getcontent();
+            }
+            exit();
         }
-        exit();
        
     }
 
