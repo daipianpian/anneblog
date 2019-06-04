@@ -20,23 +20,27 @@ var jsonWrite = function(res, ret) {
 router.post('/selectAdmin', (req,res) => {
     var select_article = $sql.blog.select_article;
 
-    // select_article += " WHERE title LIKE ?";
+    select_article += " and title like ?";
 
-    // select_article+= ' limit ? offset ?';
+    select_article += " order by id desc";
+
+    select_article+= " limit ?,?";
 
 
 
     var params = req.body;
 
+    var obj = {};
+
 
     params.title = "%"+req.body.name+"%";
 
-    conn.query(select_article, params.title, function(err, result) {
+    conn.query(select_article, [params.title, (params.pageNum-1)*params.pageSize, params.pageSize], function(err, result) {
         if(err) {
             console.log(err)
         }
         if(result[0]===undefined) {
-            res.send('0')    //username正确后，password错误，data返回 0
+            res.send([])    //username正确后，password错误，data返回 0
         }else {
             jsonWrite(res, result);
         }

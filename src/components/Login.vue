@@ -33,7 +33,9 @@ export default {
           this.$axios.post('/api/blog/selectAdmin', {
             username: username,
             password: password,
-            name: '测试'
+            name: '测试',
+            pageNum: 1,
+            pageSize: 2
           },{}).then((response) => {
             console.log(response);
           })          
