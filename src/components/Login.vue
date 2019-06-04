@@ -32,7 +32,8 @@ export default {
         }else{
           this.$axios.post('/api/blog/selectAdmin', {
             username: username,
-            password: password
+            password: password,
+            name: '测试'
           },{}).then((response) => {
             console.log(response);
           })          

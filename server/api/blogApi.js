@@ -18,9 +18,20 @@ var jsonWrite = function(res, ret) {
 
 //查找用户接口
 router.post('/selectAdmin', (req,res) => {
-    var sql_admin = $sql.blog.select_admin;
+    var select_article = $sql.blog.select_article;
+
+    // select_article += " WHERE title LIKE ?";
+
+    // select_article+= ' limit ? offset ?';
+
+
+
     var params = req.body;
-    conn.query(sql_admin, function(err, result) {
+
+
+    params.title = "%"+req.body.name+"%";
+
+    conn.query(select_article, params.title, function(err, result) {
         if(err) {
             console.log(err)
         }
