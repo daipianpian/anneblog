@@ -20,22 +20,19 @@ var jsonWrite = function(res, ret) {
 router.post('/selectAdmin', (req,res) => {
     var select_article = $sql.blog.select_article;
 
-    select_article += " and title like ?";
-
-    select_article += " order by id desc";
-
-    select_article+= " limit ?,?";
-
-
+    select_article += " and title like ?"; // 模糊查询
+    select_article += " order by id desc"; // id倒序排
+    select_article+= " limit ?,?"; // 分页查询
 
     var params = req.body;
 
-    var obj = {};
+    /*分页查询入参 start*/
+    var limitFirst = (params.pageNum-1)*params.pageSize;
+    var limitLast = params.pageSize;
+    /*分页查询入参 end*/
+    var objParams = ["%"+req.body.name+"%", limitFirst, limitLast];
 
-
-    params.title = "%"+req.body.name+"%";
-
-    conn.query(select_article, [params.title, (params.pageNum-1)*params.pageSize, params.pageSize], function(err, result) {
+    conn.query(select_article, objParams, function(err, result) {
         if(err) {
             console.log(err)
         }
