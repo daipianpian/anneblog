@@ -18,26 +18,14 @@ var jsonWrite = function(res, ret) {
 
 //查找用户接口
 router.post('/selectAdmin', (req,res) => {
-    var select_article = $sql.blog.select_article;
-
-    select_article += " and title like ?"; // 模糊查询
-    select_article += " order by id desc"; // id倒序排
-    select_article+= " limit ?,?"; // 分页查询
-
+    var sql_admin = $sql.blog.select_admin;
     var params = req.body;
-
-    /*分页查询入参 start*/
-    var limitFirst = (params.pageNum-1)*params.pageSize;
-    var limitLast = params.pageSize;
-    /*分页查询入参 end*/
-    var objParams = ["%"+req.body.name+"%", limitFirst, limitLast];
-
-    conn.query(select_article, objParams, function(err, result) {
+    conn.query(sql_admin, function(err, result) {
         if(err) {
             console.log(err)
         }
         if(result[0]===undefined) {
-            res.send([])    //username正确后，password错误，data返回 0
+            res.send('0')    //username正确后，password错误，data返回 0
         }else {
             jsonWrite(res, result);
         }

@@ -1,6 +1,6 @@
-# login
+# vue_webApp
 
-> vue+node+mysql
+> vue_webApp项目初始化模板
 
 ## Build Setup
 
