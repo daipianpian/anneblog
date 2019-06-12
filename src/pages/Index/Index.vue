@@ -33,7 +33,7 @@
 
 <script type="text/ecmascript-6">
 	import anneScroll from '@/components/anne-scroll'
-	// import {goodsHotSales} from '../../config/interface.js'
+	import {queryArticleList} from '../../config/interface.js'
 	export default{
 		data(){
 			return{
@@ -46,8 +46,11 @@
 		    loading: { // 是否显示loading
 		    	article: false
 		    },
+		    pageNum: 1,
+        pageSize: 10,
 		    articleList: [
-		    	{id: 1, typeId:1, title: '测试1', abstract: '摘要111', createTime: '2019-05-18 20:44:19'}
+		    	{id: 1, typeId:1, title: '测试1', abstract: '摘要111', createTime: '2019-05-18 20:44:19'},
+		    	{id: 2, typeId:2, title: '测试2', abstract: '摘要222', createTime: '2019-05-19 20:44:19'}
 		    ]
 			}
 		},
@@ -59,16 +62,16 @@
 		},
 		methods:{
 			init(){
-				/*const url=goodsHotSales;
+				const url=queryArticleList;
 				let params={
-					userId:1
+					keywords: this.keywords,
+          pageNum: this.pageNum,
+          pageSize: this.pageSize
 				}
 				fetch(url,params)
 				.then((res)=>{
-					if(res.code==10000){
-
-					}
-				});*/
+					console.log(res);
+				});
 			},
 			/*跳转到文章详情 start*/
 			goArticle(articleId) {
@@ -96,7 +99,7 @@
 			.title:hover{cursor: pointer;}
 		}
 		.attr-name,.article-item{ border-bottom: 1px solid $color-gray-light;}
-		/* .abstract{width: 100%;} */
+		.article-info .article-item:last-child{ border-bottom: none;}
 		.el-pagination{padding:50px 24px 50px 24px;}
 	}
 </style>

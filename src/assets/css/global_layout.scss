@@ -20,13 +20,13 @@ ul,ol{list-style:none}
 }
 
 .article-info{
-  .title{font-size: 36px; line-height: 56px;}
-  .type{display: block; width: 52px; height: 52px; line-height: 55px; margin-right: 20px;  text-align: center; border-radius: 50%;font-size: 12*2px;
+  .title{font-size: 34px; line-height: 56px;}
+  .type{display: block; width: 50px; height: 50px; line-height: 55px; margin-right: 20px;  text-align: center; border-radius: 50%;font-size: 12*2px;
     &.type-success{color:$color-success; border:1px solid $color-success;/*no*/}
     &.type-danger{color:$color-danger; border:1px solid $color-danger;/*no*/}
   }
     .title-info{font-weight: 700;}
-    .abstract{font-size: 32px; color: #555;margin-top: 8px;}
+    .abstract{font-size: 30px; color: #555;margin-top: 8px;}
     .other-info{
       font-size: 26px;color: #b3b3b3;text-align: right;margin-top: 8px;
       span{margin-left: 20px;}

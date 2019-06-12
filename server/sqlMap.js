@@ -1,8 +1,6 @@
 var sqlMap = {
     blog: {
-        select_admin: "select * from anne_article 
-                      where status = 1
-                      and title like '%'";
+        select_article: 'select * from anne_article where status=1'
     }
 }
 module.exports = sqlMap;

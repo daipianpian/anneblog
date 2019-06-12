@@ -5,7 +5,7 @@ import qs from 'qs'
 
 
 axios.defaults.timeout = 30000;
-axios.defaults.baseURL = 'http://api.test.app.glela.cn'; //测试接口域名
+axios.defaults.baseURL = 'http://localhost:8081'; //测试接口域名
 // axios.defaults.baseURL = 'http://api.app.glela.com'; //正式接口域名
 
 
