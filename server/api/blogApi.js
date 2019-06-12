@@ -17,7 +17,7 @@ const jsonWrite = function(res, ret) {
 
 
 //查找用户接口
-router.post('/selectAdmin', (req,res) => {
+router.post('/queryArticleList', (req,res) => {
     let select_article = $sql.blog.select_article;
     let params = req.body;
     let keywords = req.body.keywords;
@@ -45,7 +45,11 @@ router.post('/selectAdmin', (req,res) => {
         if(result[0]===undefined) {
             res.send([])    //username正确后，password错误，data返回 0
         }else {
-            jsonWrite(res, result);
+            let resultParams = {
+                code: 10000,
+                data: result
+            }
+            jsonWrite(res, resultParams);
         }
     })
 });

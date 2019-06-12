@@ -48,10 +48,7 @@
 		    },
 		    pageNum: 1,
         pageSize: 10,
-		    articleList: [
-		    	{id: 1, typeId:1, title: '测试1', abstract: '摘要111', createTime: '2019-05-18 20:44:19'},
-		    	{id: 2, typeId:2, title: '测试2', abstract: '摘要222', createTime: '2019-05-19 20:44:19'}
-		    ]
+		    articleList: []
 			}
 		},
 		components:{
@@ -70,7 +67,14 @@
 				}
 				fetch(url,params)
 				.then((res)=>{
-					console.log(res);
+					if(res.code == 10000){
+						let data = res.data;
+						if(data && data.length>0){
+							for(let value of data){
+								this.articleList.push(value);
+							}
+						}
+					}
 				});
 			},
 			/*跳转到文章详情 start*/
