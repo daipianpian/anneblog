@@ -71,6 +71,7 @@
 						let data = res.data;
 						if(data && data.length>0){
 							for(let value of data){
+								value.abstract = value.content.replace(/<[^>]*>|/g,"").toString().substr(0, 50);
 								this.articleList.push(value);
 							}
 						}
