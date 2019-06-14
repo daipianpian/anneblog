@@ -100,11 +100,14 @@ export default {
     refresh() {
       this.state = 2
       this.top = this.offset
+      this.infiniteLoading = false
+      this.onPullUpText='加载中……'
       this.onRefresh(this.refreshDone)
     },
     refreshDone() {
       this.state = 0
       this.top = 0
+      this.onPullUpText='加载完成'
     },
 
     infinite() {
@@ -115,6 +118,7 @@ export default {
 
     infiniteDone() {
       this.infiniteLoading = false
+      this.onPullUpText='加载完成'
     },
 
     onLoaded() {

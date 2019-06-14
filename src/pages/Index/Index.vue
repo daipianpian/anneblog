@@ -63,7 +63,7 @@
 			init(){
 				this.queryArticleList();
 			},
-			queryArticleList() {
+			queryArticleList(done) {
 				const url=queryArticleList;
 				let params={
 					keywords: this.keywords,
@@ -84,6 +84,9 @@
             this.flag = false
             this.$refs.loadmore.onLoaded();
           }
+          if(done){
+          	done();
+          }
 				});				
 			},
 	    // 下拉刷新
@@ -92,21 +95,17 @@
 	        this.pageNum=1
 	        this.flag= true
 	        this.articleList = []
-	        this.queryArticleList();
-	        console.log('下拉刷新=='+this.flag);
-	        done()
+	        this.queryArticleList(done);
+	        
 	      },500)
 	    },
 	    // 上拉加载
 	    onInfinite(done) {
-	    	console.log('上拉加载');
 	      setTimeout(() => {
 	        if(this.flag){
-	          console.log('上拉加载更多');
 	          ++this.pageNum;
-	          this.queryArticleList();
+	          this.queryArticleList(done);
 	        }else{
-	          console.log('上拉加载完毕');
 	          this.$refs.loadmore.onLoaded();
 	          return;
 	        }

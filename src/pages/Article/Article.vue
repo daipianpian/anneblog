@@ -30,8 +30,6 @@
 	    methods: {
 	    	// 初始化
 			init(){
-				// this.$store.dispatch('changeArticleCurPage',1)
-				// this.addReadNum()
 				this.queryArticleDetail()
 			},
 			addReadNum() {
