@@ -16,7 +16,7 @@
       <slot></slot>
       <footer class="load-more">
         <slot name="load-more">
-          <span>加载中……</span>
+          <span>{{onPullUpText}}</span>
         </slot>
       </footer>
     </section>
@@ -55,7 +55,8 @@ export default {
       state: 0,
       startY: 0,
       touching: false,
-      infiniteLoading: false
+      infiniteLoading: false,
+      onPullUpText: '加载中……'
     }
   },
   methods: {
@@ -108,6 +109,7 @@ export default {
 
     infinite() {
       this.infiniteLoading = true
+      this.onPullUpText='加载中……'
       this.onInfinite(this.infiniteDone)
     },
 
@@ -115,9 +117,13 @@ export default {
       this.infiniteLoading = false
     },
 
+    onLoaded() {
+      this.onPullUpText='没有更多';
+    },
+
     onScroll(e) {
       if (!this.enableInfinite || this.infiniteLoading) {
-        return
+        return false;
       }
       let outerHeight = this.$el.clientHeight
       let innerHeight = this.$el.querySelector('.inner').clientHeight
@@ -133,13 +139,12 @@ export default {
 <style>
 .yo-scroll {
   position: absolute;
-  top: 2.5rem;
+  top: 0;
   right: 0;
   bottom: 0;
   left: 0;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
-  background-color: #ddd
 }
 .yo-scroll .inner {
   position: absolute;

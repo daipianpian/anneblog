@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const mysql = require('mysql');
 const $sql = require('../sqlMap');
+
 // 连接数据库
 const conn = mysql.createConnection(models.mysql);
 conn.connect();
@@ -16,9 +17,9 @@ const jsonWrite = function(res, ret) {
 };
 
 
-//查找用户接口
+//查找文章列表
 router.post('/queryArticleList', (req,res) => {
-    let select_article = $sql.blog.select_article;
+    let selectArticleList = $sql.blog.selectArticleList;
     let params = req.body;
     let keywords = req.body.keywords;
 
@@ -32,27 +33,88 @@ router.post('/queryArticleList', (req,res) => {
         objParams = [limitFirst, limitLast];
     }else{
         objParams = ["%"+req.body.keywords+"%", limitFirst, limitLast];
-        select_article += " and title like ?"; // 模糊查询
+        selectArticleList += " and title like ?"; // 模糊查询
     }
 
-    select_article += " order by id desc"; // id倒序排
-    select_article+= " limit ?,?"; // 分页查询
+    selectArticleList += " order by id desc"; // id倒序排
+    selectArticleList+= " limit ?,?"; // 分页查询
 
-    conn.query(select_article, objParams, function(err, result) {
+    conn.query(selectArticleList, objParams, function(err, result) {
+        let resultParams = {};
         if(err) {
-            console.log(err)
+            resultParams = {
+                code: 20000,
+                data: {},
+                message: '查询文章列表失败',
+                errMessage: err
+            };
         }
         if(result[0]===undefined) {
-            res.send([])    //username正确后，password错误，data返回 0
+            resultParams = {
+                code: 20000,
+                data: []
+            };
         }else {
-            let resultParams = {
+            resultParams = {
                 code: 10000,
                 data: result
-            }
-            jsonWrite(res, resultParams);
+            };
         }
+        jsonWrite(res, resultParams);
     })
 });
+
+// 获取商品详情
+router.post('/queryArticleDetail', (req,res) => {
+    let selectArticleDetail = $sql.blog.selectArticleDetail;
+    let params = req.body;
+    let articleId = req.body.articleId;
+    conn.query(selectArticleDetail, articleId, function(err, result) {
+        let resultParams = {};
+        if(err) {
+            resultParams = {
+                code: 20000,
+                data: {},
+                message: '查询文章详情失败',
+                errMessage: err
+            };
+            jsonWrite(res, resultParams);
+        }
+        if(result[0]===undefined) {
+            resultParams = {
+                code: 20000,
+                data: {},
+                message: '查询文章详情失败'
+            };
+            jsonWrite(res, resultParams);
+        }else {
+            let resultData = result[0];
+            let newReadNum = ++resultData.readNum;
+
+            let updateReadNum = $sql.blog.updateReadNum;
+            let objParams = [newReadNum, articleId];
+            conn.query(updateReadNum,objParams, function(err, result) {
+                if(err) {
+                    resultParams = {
+                        code: 20000,
+                        data: {},
+                        message: '增加阅读量失败'
+                    };
+                }else{
+                    resultData.readNum = newReadNum;
+                    resultParams = {
+                        code: 10000,
+                        data: resultData
+                    };
+                }
+                jsonWrite(res, resultParams);
+            });
+        }
+        
+    });
+});
+
+
 module.exports = router;
 
 

@@ -9,8 +9,15 @@ import 'lib-flexible/flexible.js'
 import axios from 'axios'
 import {fetch} from './config/fetch.js'
 import common from './assets/js/common.js'
+import vueQuillEditor from 'vue-quill-editor' // 引入富文本工具
+// require styles 引入样式
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
 
 Vue.config.productionTip = false
+
+Vue.use(vueQuillEditor)
 
 window.common = common
 window.fetch = fetch
