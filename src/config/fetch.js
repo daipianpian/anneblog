@@ -5,8 +5,8 @@ import qs from 'qs'
 
 
 axios.defaults.timeout = 30000;
-axios.defaults.baseURL = 'http://localhost:8081'; //测试接口域名
-// axios.defaults.baseURL = 'http://api.app.glela.com'; //正式接口域名
+axios.defaults.baseURL = 'http://test.blog.api.mobile.daipianpian.com'; //测试接口域名
+// axios.defaults.baseURL = 'http://blog.api.mobile.daipianpian.com'; //正式接口域名
 
 
 axios.interceptors.request.use((config) => {

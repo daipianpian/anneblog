@@ -9,7 +9,14 @@ export default new Router({
 	mode: 'history',
 	base: '/',
 	routes: [
-		{ path: '/', name: 'Index', component: Index},
-    { path: '/article', name: 'article', component: article}
+		{ path: '/', name: 'Index', component: Index,
+      meta: {
+        keepAlive: true
+      }
+    },
+    { path: '/article', name: 'article', component: article,
+      meta: {
+        keepAlive: false
+      }}
 	]
 })

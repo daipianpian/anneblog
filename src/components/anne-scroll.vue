@@ -1,26 +1,30 @@
 <template lang="html">
-  <div class="yo-scroll"
-  :class="{'down':(state===0),'up':(state==1),refresh:(state===2),touch:touching}"
-  @touchstart="touchStart($event)"
-  @touchmove="touchMove($event)"
-  @touchend="touchEnd($event)"
-  @scroll="(onInfinite || infiniteLoading) ? onScroll($event) : undefined">
-    <section class="inner" :style="{ transform: 'translate3d(0, ' + top + 'px, 0)' }">
-      <header class="pull-refresh">
-        <slot name="pull-refresh">
-           <span class="down-tip">下拉更新</span>
-           <span class="up-tip">松开更新</span>
-           <span class="refresh-tip">更新中</span>
-        </slot>
-      </header>
-      <slot></slot>
-      <footer class="load-more">
-        <slot name="load-more">
-          <span>{{onPullUpText}}</span>
-        </slot>
-      </footer>
-    </section>
-  </div>
+  
+    <div class="anne-scroll"
+    :class="{'down':(state===0),'up':(state==1),refresh:(state===2),touch:touching}"
+    ref="wrapper"
+    @touchstart="touchStart($event)"
+    @touchmove="touchMove($event)"
+    @touchend="touchEnd($event)"
+    @scroll="(onInfinite || infiniteLoading) ? onScroll($event) : undefined">
+      <section class="inner" :style="{ transform: 'translate3d(0, ' + top + 'px, 0)' }">
+        <header class="pull-refresh">
+          <slot name="pull-refresh">
+             <span class="down-tip">下拉更新</span>
+             <span class="up-tip">松开更新</span>
+             <span class="refresh-tip">更新中</span>
+          </slot>
+        </header>
+        <slot></slot>
+        <footer class="load-more">
+          <slot name="load-more">
+            <span>{{onPullUpText}}</span>
+          </slot>
+        </footer>
+      </section>
+      <div v-show="scrollTop > 60" class="return-top" @click="returnTop">↑</div>
+    </div>
+  
 </template>
 
 <script>
@@ -56,8 +60,13 @@ export default {
       startY: 0,
       touching: false,
       infiniteLoading: false,
-      onPullUpText: '加载中……'
+      onPullUpText: '加载中……',
+      scrollLoadmore: null,
+      scrollTop: 0
     }
+  },
+  created() {
+    console.log('created');
   },
   methods: {
     touchStart(e) {
@@ -132,61 +141,57 @@ export default {
       let outerHeight = this.$el.clientHeight
       let innerHeight = this.$el.querySelector('.inner').clientHeight
       let scrollTop = this.$el.scrollTop
+      this.scrollTop = scrollTop
       let ptrHeight = this.onRefresh ? this.$el.querySelector('.pull-refresh').clientHeight : 0
       let infiniteHeight = this.$el.querySelector('.load-more').clientHeight
       let bottom = innerHeight - outerHeight - scrollTop - ptrHeight
       if (bottom < infiniteHeight) this.infinite()
+    },
+    // 返回顶部
+    returnTop() {
+      let that = this
+      this.scrollLoadmore = this.$refs.wrapper;
+      let timer = null
+
+      if (!this.enableInfinite || this.infiniteLoading) {
+        this.scrollLoadmore.scrollTop = 0;
+        if(timer){
+          clearInterval(timer)
+        }
+        return false;
+      }else{
+        timer = setInterval(() => {
+          let ispeed = Math.floor(-that.scrollTop / 5)
+          this.scrollLoadmore.scrollTop = that.scrollTop + ispeed
+          if (that.scrollTop === 0) {
+            clearInterval(timer)
+          }
+        }, 16)
+      }
+
     }
+  },
+  activated(){
+    this.scrollLoadmore = this.$refs.wrapper;
+    if(this.scrollLoadmore){
+      this.scrollLoadmore.scrollTop = this.scrollTop;
+    }
+  },
+  destroyed(){
   }
 }
 </script>
 <style>
-.yo-scroll {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-}
-.yo-scroll .inner {
-  position: absolute;
-  top: -2rem;
-  width: 100%;
-  transition-duration: 300ms;
-}
-.yo-scroll .pull-refresh {
-  position: relative;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.yo-scroll.touch .inner {
-  transition-duration: 0ms;
-}
-.yo-scroll.down .down-tip {
-  display: block;
-}
-.yo-scroll.up .up-tip {
-  display: block;
-}
-.yo-scroll.refresh .refresh-tip {
-  display: block;
-}
-.yo-scroll .down-tip,
-.yo-scroll .refresh-tip,
-.yo-scroll .up-tip {
-  display: none;
-}
-.yo-scroll .load-more {
-  height: 3rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}  
+.anne-scroll { position: absolute; top: 0; right: 0; bottom: 0; left: 0; overflow: auto; -webkit-overflow-scrolling: touch; }
+.anne-scroll .inner { position: absolute; top: -2rem; width: 100%; transition-duration: 300ms; }
+.anne-scroll .pull-refresh { position: relative; left: 0; top: 0; width: 100%; height: 2rem; display: flex; align-items: center; justify-content: center; }
+.anne-scroll.touch .inner { transition-duration: 0ms; }
+.anne-scroll.down .down-tip { display: block; }
+.anne-scroll.up .up-tip { display: block; }
+.anne-scroll.refresh .refresh-tip { display: block; }
+.anne-scroll .down-tip,
+.anne-scroll .refresh-tip,
+.anne-scroll .up-tip { display: none; }
+.anne-scroll .load-more { height: 3rem; display: flex; align-items: center; justify-content: center; font-size: 0.3rem;} 
+.return-top{position: fixed; width:100px;height: 100px; bottom: 5%; right: 5%; text-align: center; line-height: 100px; background: #EDF0F0;border-radius: 8%;} 
 </style>
